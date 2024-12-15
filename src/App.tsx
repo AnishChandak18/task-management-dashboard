@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from 'react';
 import { Task } from './types/task';
 import { createTask, deleteTask, getTasks, updateTask } from './lib/api';
@@ -96,6 +97,23 @@ function App() {
     setIsDialogOpen(true);
   };
 
+  const handleDragStart = (task: Task) => {
+    setSelectedTask(task);
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+  }
+
+  const handleDrop = async (e: React.DragEvent, status: Task["status"]) => {
+    e.preventDefault();
+    if (!selectedTask) return;
+    const { title, description } = selectedTask;
+
+    const returnData = await handleUpdateTask({ title, description, status });
+    console.log(returnData);
+  }
+
   const filteredTasks = tasks.filter((task) =>
     task.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -119,13 +137,18 @@ function App() {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
           <TaskColumn
             title="To Do"
             tasks={filteredTasks}
             status="todo"
             onEdit={handleEditTask}
             onDelete={handleDeleteTask}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, "todo")}
           />
           <TaskColumn
             title="In Progress"
@@ -133,6 +156,9 @@ function App() {
             status="in-progress"
             onEdit={handleEditTask}
             onDelete={handleDeleteTask}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, "in-progress")}
           />
           <TaskColumn
             title="Completed"
@@ -140,6 +166,9 @@ function App() {
             status="completed"
             onEdit={handleEditTask}
             onDelete={handleDeleteTask}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, "completed")}
           />
         </div>
 

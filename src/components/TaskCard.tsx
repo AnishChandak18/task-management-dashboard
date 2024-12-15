@@ -9,9 +9,10 @@ interface TaskCardProps {
   task: Task;
   onEdit: (task: Task) => void;
   onDelete: (id: number) => void;
+  onDragStart: (task: Task) => void;
 }
 
-export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
+export function TaskCard({ task, onEdit, onDelete, onDragStart }: TaskCardProps) {
   const statusColors = {
     todo: 'bg-yellow-500',
     'in-progress': 'bg-blue-500',
@@ -19,7 +20,7 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
   };
 
   return (
-    <Card className="mb-4 cursor-move">
+    <Card draggable onDragStart={() => onDragStart(task)} className="mb-4 cursor-move">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <Badge variant="secondary" className={statusColors[task.status]}>
@@ -27,20 +28,16 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
           </Badge>
           <div className="flex gap-2">
             <Button
-              variant="ghost"
-              size="icon"
+              variant="outline"
               onClick={() => onEdit(task)}
-              className="h-8 w-8"
             >
-              <Pencil className="h-4 w-4" />
+              <Pencil size={16} />
             </Button>
             <Button
-              variant="ghost"
-              size="icon"
+              variant="destructive"
               onClick={() => onDelete(task.id)}
-              className="h-8 w-8 text-destructive"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 size={16} />
             </Button>
           </div>
         </div>
